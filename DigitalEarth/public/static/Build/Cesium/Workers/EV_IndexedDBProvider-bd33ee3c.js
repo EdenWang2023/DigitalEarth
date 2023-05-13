@@ -1,0 +1,25 @@
+/**
+ * @license
+ * Cesium - https://github.com/CesiumGS/cesium
+ * Version 1.96
+ *
+ * Copyright 2011-2022 Cesium Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Columbus View (Pat. Pend.)
+ *
+ * Portions licensed separately.
+ * See https://github.com/CesiumGS/cesium/blob/main/LICENSE.md for full licensing details.
+ */
+define(["exports","./defined-b681f02d"],(function(e,t){"use strict";function n(e){this._windowIDB=t.defaultValue(e,void 0),this._iDB=void 0}Object.defineProperties(n.prototype,{iDB:{get:function(){return this._iDB}}}),n.prototype.createIDB=function(e,n,o,i){if(t.defined(this._windowIDB)){let s=this,r=this._windowIDB.open(e,n);r.onupgradeneeded=function(e){let n=e.target.result;for(let e=0;e<o.length;e++)if(!n.objectStoreNames.contains(o[e])){const t=n.createObjectStore(o[e],{keyPath:"key",autoIncrement:!0});"model"===o[e]?t.createIndex("name","name",{unique:!1}):t.createIndex("name","name",{unique:!0})}t.defined(i)&&i("upgradeneeded")},r.onsuccess=function(e){let n=e.target.result;s._iDB=n,t.defined(i)&&i("success")},r.onerror=function(e){t.defined(i)&&i("error"),alert("Why didn't you allow my web app to use IndexedDB?!")}}},n.closeIDB=function(e,n){t.defined(this._iDB)&&this._iDB.name===e&&this._iDB.version===n&&this._iDB.close()};const o=67108864;n.prototype.saveModelArrayBuffer=function(e,n,i,s,r){if(t.defined(this._iDB)&&this._iDB.name===e&&this._iDB.version===n)if(this._iDB.objectStoreNames.contains(i)){const e=this._iDB.transaction([i],"readwrite").objectStore(i);let t=0,n=0;const a=Math.ceil(r.byteLength/o);for(let i=0;i<a;i++){n+=o;const a={name:s,chunkId:i,data:r.slice(t,n)},c=e.put(a);t=n,c.onsuccess=function(e){console.log("arraybuffer writed success")},c.onerror=function(e){console.log("arraybuffer writed error")}}}else console.log(`${i}:该表不存在!`);else console.log(`${e}:保存数据有问题!`)},n.prototype.downloadModelArrayBuffer=function(e,n,o,i,s,r,a){if(t.defined(this._iDB)&&this._iDB.name===e&&this._iDB.version===n)if(this._iDB.objectStoreNames.contains(o)){const e=this._iDB.transaction([o],"readonly").objectStore(o),t=s,n=i,c=new Array;let l=0;const d=e.index("name").openCursor(IDBKeyRange.only(i));d.onsuccess=function(e){const o=e.target.result;if(o){console.log(o.key);const e=o.value;if(e.name===n){const t=new Uint8Array(e.data);c.push(t),l+=t.byteLength}o.continue()}else{let e=0;const n=new Uint8Array(l);for(let t=0;t<c.length;t++)n.set(c[t],e),e+=c[t].length;c.length>0?a(t,n):r(t)}},d.onerror=function(e){console.log("索引查询失败!")}}else r(s);else console.log(`${e}:下载数据有问题!`)},n.prototype.saveTerrainData=function(e,n,o,i){if(t.defined(this._iDB)&&this._iDB.name===e&&this._iDB.version===n)if(this._iDB.objectStoreNames.contains(o)){const e=this._iDB.transaction([o],"readwrite").objectStore(o),n={name:i.keyName,level:i.level,x:i.x,y:i.y,data:i.data,upsample:t.defaultValue(i.upsample,!1)},s=e.put(n);s.onsuccess=function(e){},s.onerror=function(e){}}else console.log(`${o}:该表不存在!`);else console.log(`${e}:保存数据有问题!`)},n.prototype.downloadTerrainData=function(e,n,o,i,s,r){if(t.defined(this._iDB)&&this._iDB.name===e&&this._iDB.version===n)if(this._iDB.objectStoreNames.contains(o)){const e=this._iDB.transaction([o],"readonly").objectStore(o),t=i,n=e.index("name").openCursor(IDBKeyRange.only(t.keyName));n.onsuccess=function(e){const t=e.target.result;t?(i.level=t.value.level,i.x=t.value.x,i.y=t.value.y,i.upsample=t.value.upsample,r(i,t.value.data)):s(i)},n.onerror=function(e){console.log("索引查询失败!")}}else s(i);else console.log(`${e}:下载数据有问题!`)},n.prototype.save3DTileArrayBuffer=function(e,n,o,i,s){if(t.defined(this._iDB)&&this._iDB.name===e&&this._iDB.version===n)if(this._iDB.objectStoreNames.contains(o)){const e=this._iDB.transaction([o],"readwrite").objectStore(o),n={name:i.keyName,meshPrimitives:i.meshPrimitives,data:i.data},r=e.put(n);r.onsuccess=function(e){t.defined(s)&&s("upgradeneeded")},r.onerror=function(e){t.defined(s)&&s("upgradeneeded")}}else console.log(`${o}:该表不存在!`);else console.log(`${e}:保存数据有问题!`)},n.prototype.download3DTileArrayBuffer=function(e,n,o,i,s,r){if(t.defined(this._iDB)&&this._iDB.name===e&&this._iDB.version===n)if(this._iDB.objectStoreNames.contains(o)){const e=this._iDB.transaction([o],"readonly").objectStore(o),t=i,n=t.keyName,a=e.index("name").openCursor(IDBKeyRange.only(n));a.onsuccess=function(e){const n=e.target.result;n?(t.meshPrimitives=n.value.meshPrimitives,r(t,n.value.data)):s(t)},a.onerror=function(e){console.log("索引查询失败!")}}else console.log(`${o}:数据库中不存在该表名!`);else console.log(`${e}:下载数据有问题!`)},e.EV_IndexedDBProvider=n}));
